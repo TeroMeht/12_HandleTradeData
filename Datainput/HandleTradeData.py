@@ -1,8 +1,14 @@
+import sys
+import os
+
+# Add the parent directory (main folder) to the system path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import glob
 import pandas as pd
-from AdjustTimezone import adjust_timezone_transactions
-from db_connection import connect_db
-import os
+
+from AdjustTimezone import adjust_timezone_transactions  # from main folder
+from db_connection import connect_db                    # from main folder
 import shutil
 
 
@@ -116,7 +122,7 @@ def insert_all_transactions(cursor, transactions_df):
             cursor.execute('SELECT 1 FROM executions WHERE "PermId" = %s;', (perm_id,))
             exists = cursor.fetchone()
             if exists:
-                print(f"PermId {perm_id} already exists. Skipping insert.")
+                print(f"PermId {perm_id} already exists in my database. Skipping insert.")
                 continue
 
             date_str = str(row["Date"])  # Should be in YYYY-MM-DD format

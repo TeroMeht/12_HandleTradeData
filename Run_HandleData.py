@@ -5,7 +5,7 @@ from Calculate import calculate_vwap, calculate_ema, calculate_rvol,calculate_14
 from AdjustTimezone import adjust_timezone_IB_data
 from time import sleep
 from db_connection import connect_db
-from config import read_project_config
+from db_connection import read_project_config
 
 
 # Keskustelu oman kannan kanssa
@@ -498,6 +498,7 @@ if __name__ == '__main__':
 # Kirjoittaa kantaan tradet execution taulun perusteella
     insert_trades_to_db(df_uniquepairs_data, cursor, connection)
     trades = get_all_trades(cursor)
+    print(trades)
     # Get the IB connection settings from the config file
     ib_host = config['ib_connection']['host']
     ib_port = config['ib_connection']['port']
