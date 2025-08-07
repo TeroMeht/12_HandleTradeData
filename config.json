@@ -1,0 +1,24 @@
+{
+  "ib_connection": {
+    "host": "127.0.0.1",
+    "port": 4002,
+    "clientId": 1
+  },
+    "destinations": {
+      "1min": "C:/tmp/data1/",
+      "2min": "C:/tmp/data2/",
+      "5min": "C:/tmp/data5/",
+      "30min": "C:/tmp/data30/"
+    },
+    "sheet_name": "Teron tradekirja",
+    "worksheet_name": "Trades",
+    "barSizeSettings": {
+      "1min": "1 min",
+      "2min": "2 mins",
+      "5min": "5 mins",
+      "30min": "30 mins"
+    },
+  "daily":{
+    "1D":"C:/tmp/datad/"
+
+}}

@@ -1,0 +1,7 @@
+{
+  "folders": {
+    "in": "C:/Projects/12_HandleTradeData/Datainput/data_in/",
+    "out": "C:/Projects/12_HandleTradeData/Datainput/data_processed/",
+    "error": "C:/Projects/12_HandleTradeData/Datainput/data_error/"
+  }
+}
