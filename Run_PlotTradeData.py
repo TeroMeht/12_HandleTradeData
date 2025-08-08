@@ -217,8 +217,7 @@ def fetch_trades_with_rvol(cursor, trades_table: str, marketdatad_table: str) ->
     query = f"""
         SELECT
             t.*,
-            m."RelativeVolume",
-            m."Date"
+            m."RelativeVolume"
         FROM {trades_table} t
         LEFT JOIN LATERAL (
             SELECT "RelativeVolume", "Date"
@@ -237,7 +236,6 @@ def fetch_trades_with_rvol(cursor, trades_table: str, marketdatad_table: str) ->
 
 
 # Write database
-
 def update_trade_setup(trade_id, setup, connection):
     try:
         cursor = connection.cursor()

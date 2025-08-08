@@ -80,23 +80,12 @@ def build_trade_panel():
         "maxHeight": "none"
     })
 
-def build_intraday_controls():
-    return html.Div([
-        html.Label("Show Executions:", style={"marginRight": "1px"}),
-        dcc.Checklist(
-            id='show-executions-toggle',
-            options=[{'label': '', 'value': 'show'}],
-            value=['show'],  # default checked
-            style={"display": "inline-block", "verticalAlign": "middle"}
-        )
-    ], style={"marginBottom": "1px", "textAlign": "left", "paddingLeft": "1px"})
 
 
 
 def build_intraday_and_table_row():
     return html.Div([
         html.Div([
-            build_intraday_controls(),  # Add toggle above intraday chart
             dcc.Graph(id='intraday-chart', style={"height": "600px", "width": "100%"})
         ], style={"width": "60%", "display": "inline-block", "padding": "1px"}),
 
