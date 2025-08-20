@@ -43,7 +43,8 @@ def build_trade_controls():
                 {'label': 'Swing trade exit', 'value': 'Swing trade exit'},
                 {'label': 'Reversal', 'value': 'Reversal'},
                 {'label': 'Reversal short', 'value': 'Reversal short'},
-                {'label': 'Parabolic short', 'value': 'Parabolic short'}
+                {'label': 'Parabolic short', 'value': 'Parabolic short'},
+                {'label': 'Other', 'value': 'Other'}
             ],
             placeholder="Choose a setup",
             style={"width": "180px", "display": "inline-block", "verticalAlign": "middle"}
