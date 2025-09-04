@@ -5,8 +5,9 @@
     "clientId": 1
   },
   "folders": {
-    "in": "C:/Projects/12_HandleTradeData/Datainput/data_in/",
-    "out": "C:/Projects/12_HandleTradeData/Datainput/data_processed/",
-    "error": "C:/Projects/12_HandleTradeData/Datainput/data_error/"
+    "in": "C:/Projects/12_HandleTradeData/datainput/data_in/",
+    "out": "C:/Projects/12_HandleTradeData/datainput/data_processed/",
+    "error": "C:/Projects/12_HandleTradeData/datainput/data_error/",
+    "manual": "C:/Projects/12_HandleTradeData/datainput/manual_data_entry.csv"
   }
 }

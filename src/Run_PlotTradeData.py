@@ -2,16 +2,23 @@ import dash
 from dash import dcc, html, Input, Output, State
 import plotly.graph_objects as go
 import pandas as pd
-from db_connection import connect_db
+
 from plotly.subplots import make_subplots
 import numpy as np
 from dash import dash_table
-import BuildHTML as BHT
+import helpers.BuildHTML as BHT
 from dash import callback_context
+
+from common.ReadConfigsIn import *
+from helpers.DBfunctions import *
 
 # Create Dash app
 app = dash.Dash(__name__)
 app.title = "Candlestick Dashboard"
+
+database_config = read_database_config(filename="database.ini", section="postgresql")
+
+
 
 # --- Layout ---
 app.layout = html.Div([
@@ -695,8 +702,7 @@ def update_chart(n_clicks, trade_id,setup):
     if not trade_id:
         return go.Figure(), go.Figure(), go.Figure(), "", "Please enter a valid Trade ID."
 
-    connection = connect_db()
-    cursor = connection.cursor()
+    connection, cursor= get_connection_and_cursor(database_config)
     try:
         # Fetch price data
         df_daily = fetch_marketdata(trade_id, cursor, table_name="marketdatad")
@@ -768,7 +774,8 @@ def save_trade_info(setup_clicks, rating_clicks, trade_id, setup, rating):
     messages = []
 
     try:
-        conn = connect_db()
+        conn, cur = get_connection_and_cursor(database_config)
+
 
         if triggered_id == 'save-setup-button':
             if setup:

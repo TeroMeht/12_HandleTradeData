@@ -1,9 +1,8 @@
-import psycopg2
 from configparser import ConfigParser
 import json
 
 # ✅ Database config function
-def db_config(filename="database.ini", section="postgresql"):
+def read_database_config(filename,section):
     """
     Parse the database.ini file and return connection parameters.
     """
@@ -20,20 +19,7 @@ def db_config(filename="database.ini", section="postgresql"):
         )
     return db
 
-# ✅ Function to connect to the database
-def connect_db():
-    """
-    Connect to the PostgreSQL database using parameters from db_config().
-    Returns a psycopg2 connection object or None if connection fails.
-    """
-    connection = None
-    try:
-        params = db_config()
-        connection = psycopg2.connect(**params)
-        return connection
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error: {error}")
-        return None
+
 
 # ✅ Optional: Project-level JSON config
 def read_project_config(config_file):
