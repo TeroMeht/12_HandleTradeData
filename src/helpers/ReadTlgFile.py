@@ -3,17 +3,11 @@ import glob
 
 
 def read_tlg_file(data_in_folder):
-    """
-    Reads the single .tlg file in the given folder and parses account information and transactions.
-    Returns:
-        dict: Account information (empty if no file found)
-        pd.DataFrame: Transactions DataFrame (empty if no file found)
-        str or None: TLG file path, None if not found
-    """
+
     # Find the single .tlg file in the folder
     file_paths = glob.glob(f"{data_in_folder}/*.tlg")
     if not file_paths:
-        print(f"No .tlg file found in {data_in_folder}. Returning empty DataFrame.")
+        print(f"\nNo .tlg file found in {data_in_folder}. Returning empty DataFrame.")
         return {}, pd.DataFrame(), None
 
     file_path = file_paths[0]  # Assumes exactly one .tlg file exists
