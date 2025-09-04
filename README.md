@@ -10,7 +10,15 @@ Trade database for multiple timeframes. The software is divided into 2 separate 
 Executions are shown on 2 minute chart
 
 
-# UI Trade Review
+## Database design
+
+There are 3 different tables for each market data timeframe. TradeId is used as primary key between these. All trades and their details are saved into trades table. Executions are fetched from Interactive Brokers .tlg tradelog file when processing the data.
+
+<img width="633" height="563" alt="image" src="https://github.com/user-attachments/assets/02fc3d1d-88e3-4c66-bbc2-51bb3b61a655" />
+
+
+
+## UI Trade Review
 
 Run_PlotTradeData.py starts Trade viewer tool where user can dive deepering into ones trades and executions. There are functionalities to categories and rate trades. These changes are saved into the database.
 
