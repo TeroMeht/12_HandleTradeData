@@ -1,26 +1,19 @@
+import pandas as pd
 
-
-# Function to calculate VWAP
+# in = df (Open, High, Low, Close, Volume)
+# out = df (Open, High, Low, Close, Volume, VWAP)
 def calculate_vwap(data):
-    # Initialize VWAP column with float zeros
-    data['VWAP'] = 0.0  # Explicitly set to float
-
-    # Calculate OHLC4 and add it as a new column
+    data = data.copy()
     data['OHLC4'] = (data['Open'] + data['High'] + data['Low'] + data['Close']) / 4
-
-
-    for i, row in data.iterrows():
-        # Use OHLC4 instead of Close for VWAP calculation
-        cumulative_volume = data.loc[:i, 'Volume'].sum()
-        cumulative_price_volume = (data.loc[:i, 'OHLC4'] * data.loc[:i, 'Volume']).sum()
-        data.at[i, 'VWAP'] = cumulative_price_volume / cumulative_volume if cumulative_volume != 0 else 0.0
-        data['VWAP'] = data['VWAP'].round(2)
-        
-    # Drop the OHLC4 column if it's not needed in the final output
+    cumulative_vol = data['Volume'].cumsum()
+    cumulative_pv = (data['OHLC4'] * data['Volume']).cumsum()
+    data['VWAP'] = (cumulative_pv / cumulative_vol).fillna(0).round(2)
     data.drop(columns=['OHLC4'], inplace=True)
-
     return data
 
+
+# in = df (Open, High, Low, Close, Volume)
+# out = df (Open, High, Low, Close, Volume, EMA9)
 def calculate_ema(data, period):
 
     if 'Close' not in data.columns:
@@ -30,17 +23,33 @@ def calculate_ema(data, period):
     data[column_name] = data['Close'].ewm(span=period, adjust=False).mean().round(2)
     return data
 
-def calculate_14day_atr(data,period=14):
+# in = df (High, Low, Close)
+# out = df (High, Low, Close, Prev_Close, TR, ATR)
+def calculate_14day_atr(data, period=14):
+    """
+    Calculate 14-day ATR for all rows and return a DataFrame with ATR column.
+    Input: DataFrame with at least High, Low, Close columns.
+    Output: DataFrame with Prev_Close, TR, and ATR columns added.
+    """
+    df = data.copy()
 
-    data['TR'] = data[['High', 'Low', 'Close']].apply(
-        lambda row: max(row['High'] - row['Low'], 
-                        abs(row['High'] - row['Close']), 
-                        abs(row['Low'] - row['Close'])), axis=1)
+    # Previous close
+    df['Prev_Close'] = df['Close'].shift(1)
 
-    # Calculate ATR using Exponential Moving Average (EMA)
-    data['ATR'] = data['TR'].ewm(span=period, adjust=False).mean()
+    # True Range (TR)
+    df['TR'] = df.apply(
+        lambda row: max(
+            row['High'] - row['Low'],
+            abs(row['High'] - row['Prev_Close']) if pd.notnull(row['Prev_Close']) else row['High'] - row['Low'],
+            abs(row['Low'] - row['Prev_Close']) if pd.notnull(row['Prev_Close']) else row['High'] - row['Low']
+        ),
+        axis=1
+    )
 
-    return data
+    # ATR: exponential moving average of TR (rounded to 4 decimals)
+    df['ATR'] = df['TR'].ewm(span=period, adjust=False).mean().round(4)
+
+    return df
 
 def calculate_rvol(data, period = 5):
 
@@ -54,24 +63,23 @@ def calculate_rvol(data, period = 5):
     
     return data
 
-def calculate_vwap_relative_atr(data, atr_value):
-
-    if atr_value is None or atr_value == 0:
-        raise ValueError("Invalid ATR value. Cannot divide by zero.")
-
-    # Calculate Relative ATR
-    data['Relatr'] = (data['VWAP'] - data['Close']) / atr_value
-        # Round the Relatr column to 2 decimal places
-    data['Relatr'] = data['Relatr'].round(2)
+# intraday data and daily atr data Relatr calculation will be done and column added
+def calculate_relatr(intraday_df, daily_atr_df):
+    """
+    Adds a Relatr column to intraday_df using the last ATR value from daily_atr_df.
     
-    return data
+    intraday_df: DataFrame with columns ['Symbol', 'Close', 'VWAP', ...]
+    daily_atr_df: DataFrame with columns ['Symbol', 'ATR', ...]
+    """
+    intraday_df = intraday_df.copy()
+    
+    # Get last ATR value per symbol
+    last_atr = daily_atr_df.groupby('Symbol')['ATR'].last().to_dict()
 
-
-# tää ei oo viel käytössä missään
-def calculate_sma(data, period):
-    if 'Close' not in data.columns:
-        raise ValueError("The DataFrame must contain a 'Close' column.")
-
-    column_name = f'SMA{period}'
-    data[column_name] = data['Close'].ewm(span=period, adjust=False).mean().round(2)
-    return data
+    # Compute Relatr for each row
+    intraday_df['Relatr'] = intraday_df.apply(
+        lambda row: round((row['VWAP'] - row['Close']) / last_atr.get(row['Symbol'], 1), 2),
+        axis=1
+    )
+    
+    return intraday_df

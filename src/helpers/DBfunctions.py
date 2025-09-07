@@ -3,26 +3,29 @@ import pandas as pd
 
 # Return connection and cursor
 def get_connection_and_cursor(database_config):
+
     """Create and return a database connection and cursor."""
     conn = psycopg2.connect(**database_config)
     if not conn:
         raise Exception("Failed to connect to database.")
     cur = conn.cursor()
+
     return conn, cur
 
 
 
 
-def insert_trades_to_db(df, database_config):
-    results = []  # Store outcome per trad
+def insert_trades_to_db(data, database_config):
+
     conn, cur = get_connection_and_cursor(database_config)
 
+    results = []  # Store outcome per trade
     try:
         # Ensure the 'Date' column is datetime and format to string 'YYYY-MM-DD'
-        df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
+        data['Date'] = pd.to_datetime(data['Date']).dt.strftime('%Y-%m-%d')
 
         # Extract unique (Symbol, Date) pairs
-        values = df[["Symbol", "Date"]].drop_duplicates().values.tolist()
+        values = data[["Symbol", "Date"]].drop_duplicates().values.tolist()
 
         if not values:
             print("No trades to insert.")
@@ -64,7 +67,8 @@ def insert_trades_to_db(df, database_config):
         if conn:
             conn.close()
 
-def insert_executions_to_db(transactions_df, database_config):
+def insert_executions_to_db(data, database_config):
+    
     conn, cur = get_connection_and_cursor(database_config)
 
     insert_query = """
@@ -79,7 +83,7 @@ def insert_executions_to_db(transactions_df, database_config):
     try:
       
 
-        for _, row in transactions_df.iterrows():
+        for _, row in data.iterrows():
             perm_id = str(row["TransactionID"])
             try:
                 # Check if PermId already exists
@@ -138,7 +142,7 @@ def insert_executions_to_db(transactions_df, database_config):
         if conn:
             conn.close()
 
-def insert_marketdata_to_db(data,database_config):
+def insert_marketdata_to_db(data, database_config):
 
     conn, cur = get_connection_and_cursor(database_config)
 
@@ -159,8 +163,6 @@ def insert_marketdata_to_db(data,database_config):
                 int(row["Volume"]),
                 float(row["5DayAvgVolume"]),
                 float(row["RelativeVolume"]),
-                float(row["TR"]),
-                float(row["ATR"]),
                 int(row["TradeId"])
             )
             for _, row in data.iterrows()
@@ -169,9 +171,9 @@ def insert_marketdata_to_db(data,database_config):
         insert_query = """
             INSERT INTO marketdatad (
                 "Symbol", "Date", "Open", "High", "Low", "Close", "Volume",
-                "5DayAvgVolume", "RelativeVolume", "TR", "ATR", "TradeId"
+                "5DayAvgVolume", "RelativeVolume", "TradeId"
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT ("Symbol", "Date", "TradeId") DO NOTHING;
         """
 
@@ -369,37 +371,7 @@ def fetch_individual_trade(database_config, table_name: str, trade_id: int) -> b
         if conn:
             conn.close()
 
-def fetch_atr_value(trade_id, database_config):
 
-    try:
-        conn, cur = get_connection_and_cursor(database_config)
-
-        query = """
-        SELECT m."ATR"
-        FROM trades t
-        JOIN marketdatad m
-          ON m."Date" = t."Date"::date
-         AND m."Symbol" = t."Symbol"
-        WHERE t."TradeId" = %s
-        LIMIT 1;
-        """
-        cur.execute(query, (trade_id,))
-        result = cur.fetchone()
-
-        if result:
-            return result[0]  # ATR value
-        else:
-            return None
-
-    except Exception as e:
-        print(f"Error fetching ATR for trade_id {trade_id}: {e}")
-        return None
-
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
 
 def fetch_trades_by_symbol_and_date(symbol, date, database_config):
 
