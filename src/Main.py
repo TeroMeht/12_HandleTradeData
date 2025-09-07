@@ -3,7 +3,7 @@ import pandas as pd
 
 from common.ReadConfigsIn import *
 from common.AdjustTimezone import *
-from helpers.DBfunctions import *
+from database.DBfunctions import *
 from helpers.HandleDataFrames import *
 from helpers.ReadTlgFile import read_tlg_file  # from helpers folder
 from helpers.FetchIBdata import fetch_trade_data

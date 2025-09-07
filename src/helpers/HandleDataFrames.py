@@ -1,6 +1,6 @@
 from common.Calculate import *
 from common.AdjustTimezone import adjust_timezone_IB_data
-from helpers.DBfunctions import *
+from database.DBfunctions import *
 
 
 def prepare_bars_dataframe(bars_df, symbol):

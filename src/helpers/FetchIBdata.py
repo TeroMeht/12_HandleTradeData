@@ -1,7 +1,7 @@
 
 from ib_insync import IB, Stock
 from helpers.HandleDataFrames import *
-from helpers.DBfunctions import *
+from database.DBfunctions import *
 from common.ReadConfigsIn import *
 from common.Calculate import *
 
