@@ -6,7 +6,7 @@ How to review your trades so that you can see multiple timeframes at the same ti
 
 ## Solution
 
-Build database in order to organize trading data and executions.
+Build database in order to organize trading data and executions. This will make pattern recognition much easier in the future similar situations.
 
 
 ## Database design
@@ -17,3 +17,8 @@ There are 3 different tables for each market data timeframe. TradeId is used as 
 
 
 
+<img width="661" height="238" alt="image" src="https://github.com/user-attachments/assets/6f8b4316-1a79-4cfc-8956-cb74b8ae0fbb" />
+
+
+Example query from table marketdatad
+<img width="1337" height="623" alt="image" src="https://github.com/user-attachments/assets/20e4e7be-541f-4636-a947-05b24f62ac6e" />
