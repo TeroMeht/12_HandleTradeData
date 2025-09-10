@@ -135,7 +135,7 @@ def intraday_data(df_data, ib, bar_size, durationStr, database_config):
         print(data)
         print(atr_df)
         intraday_with_relatr = calculate_relatr(data, atr_df)
-        print(intraday_with_relatr)
+ 
 
         # insert into DB
         insert_marketdataintrad_to_db(intraday_with_relatr, database_config)
@@ -180,7 +180,7 @@ def atrdata(df_data, ib, bar_size, durationStr, database_config):
 
             # Now call your handle_incoming_dataframe_daily
             df_processed = handle_incoming_dataframe_atr(bars_df, symbol, trade_id)
-  
+
 
         except Exception as e:
             print(f"Error fetching data for {symbol}: {e}")
